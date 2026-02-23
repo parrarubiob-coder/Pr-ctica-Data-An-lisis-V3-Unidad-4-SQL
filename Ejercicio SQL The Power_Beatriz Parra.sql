@@ -27,7 +27,8 @@ where "actor_id" between 30 and 40;
 
 select "title" 
 from "film" 
-where "language_id" = "original_language_id";
+where original_language_id IS NULL
+   OR language_id = original_language_id;
 
 -- =====================================================
 -- 5. Ordena las películas por duración de forma ascendente.
@@ -234,9 +235,9 @@ where f.length > (
 -- 25. Número de alquileres registrados por mes.
 -- =====================================================
 
-select to_char(r.rental_date, 'Month' ) as "Mes", count(r.rental_id ) as "Alquileres"
+select to_char(r.rental_date, 'YYYY-MM' ) as "Mes", count(r.rental_id ) as "Alquileres"
 from rental r 
-group by to_char(r.rental_date, 'Month');
+group by to_char(r.rental_date, 'YYYY-MM');
 
 -- =====================================================
 -- 26. Encuentra el promedio, desviación estándar y varianza del total
@@ -485,8 +486,8 @@ create view actor_num_peliculas as
 -- =====================================================
 
 select c.customer_id, concat(c.first_name , ' ', c.last_name ) as "Nombre_cliente", count(r.rental_id ) as "Alquileres_realizados"
-from rental r 
-left join customer c 
+from  customer c
+left join rental r
 on r.customer_id = c.customer_id 
 group by c.customer_id , concat(c.first_name , ' ', c.last_name );
 
@@ -633,9 +634,11 @@ select F.title as "Título_palícula"
 from film f 
 	inner join film_category fc 
 	on f.film_id = fc.film_id 
-	inner join category c 
-	on c.category_id = fc.category_id 
-where c."name" = 'Animation';	
+where FC.category_id = (
+	select c.category_id
+	from category c
+	where c.name = 'Animation' );
+
 	
 -- =====================================================
 -- 59. Encuentra los nombres de las películas que tienen la misma duración que la película con el título
