@@ -23,7 +23,9 @@ where "actor_id" between 30 and 40;
 -- 4. Obtén las películas cuyo idioma coincide con el
 --    idioma original.
 -- =====================================================
-	--*No me funciona porque la columna original_lenguage_id está en blanco*
+	-- En este modelo, cuando original_language_id es NULL entiendo que el idioma original
+	-- coincide con language_id y no se almacena por redundancia.
+	-- Por tanto, todas las películas cumplen que el idioma coincide con el idioma original.
 
 select "title" 
 from "film" 
